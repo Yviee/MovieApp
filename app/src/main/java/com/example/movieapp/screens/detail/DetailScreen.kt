@@ -10,18 +10,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.movieapp.models.Movie
 import com.example.movieapp.models.getMovies
+import com.example.movieapp.viewmodel.FavouritesViewModel
+import com.example.movieapp.widgets.FavouriteIcon
 import com.example.movieapp.widgets.HorizontalScrollableImageView
 import com.example.movieapp.widgets.MovieRow
 
 @ExperimentalAnimationApi
-@Preview(showBackground = true)
 @Composable
 fun DetailScreen(
-    navController: NavController = rememberNavController(),
+    navController: NavController = rememberNavController(), viewModel: FavouritesViewModel,
     movieId: String? = "tt0499549"
     ){
 
@@ -42,20 +44,23 @@ fun DetailScreen(
             }
         }
     ) {
-        MainContent(movie = movie)
+        MainContent(movie = movie, viewModel)
     }
-
 }
 
 @ExperimentalAnimationApi
 @Composable
-fun MainContent(movie: Movie) {
+fun MainContent(movie: Movie, viewModel: FavouritesViewModel) {
     
     Surface(modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight()) {
         Column {
-            MovieRow(name = movie)
+            MovieRow(name = movie) {
+                FavouriteIcon(isFavourite = viewModel.isFavourite(movie),
+                    addToFavourite = {viewModel.addMovie(movie)},
+                    removeFromFavourite = {viewModel.removeMovie(movie)})
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -67,8 +72,6 @@ fun MainContent(movie: Movie) {
 
         }
     }
-
-
 }
 
 fun filterMovie(movieId: String?): Movie {

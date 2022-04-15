@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -19,11 +20,13 @@ import com.example.movieapp.models.Movie
 import com.example.movieapp.models.getMovies
 import com.example.movieapp.navigation.MovieScreens
 import com.example.movieapp.ui.theme.MovieAppTheme
+import com.example.movieapp.viewmodel.FavouritesViewModel
+import com.example.movieapp.widgets.FavouriteIcon
 import com.example.movieapp.widgets.MovieRow
 
 @ExperimentalAnimationApi
 @Composable
-fun HomeScreen(navController: NavController = rememberNavController()){
+fun HomeScreen(navController: NavController = rememberNavController(), viewModel: FavouritesViewModel){
 
     MovieAppTheme {
         var showMenu by remember {
@@ -55,18 +58,27 @@ fun HomeScreen(navController: NavController = rememberNavController()){
                 )
             }
         ) {
-            MainContent(navController = navController)
+            MainContent(navController = navController, viewModel)
         }
     }
 }
 
 @ExperimentalAnimationApi
 @Composable
-fun MainContent(navController: NavController, movies: List<Movie> = getMovies()){
+fun MainContent(navController: NavController, viewModel: FavouritesViewModel, movies: List<Movie> = getMovies()){
 
-    LazyColumn{
-        items(movies) {movie -> MovieRow(movie) { movieId ->
-            navController.navigate(route = MovieScreens.DetailScreen.name + "/$movieId")
-        } }
+    LazyColumn {
+        items(movies) { movie ->
+            MovieRow(
+                name = movie,
+                onItemClick = { movieId ->
+                    navController.navigate(route = MovieScreens.DetailScreen.name + "/$movieId")
+                }
+            ) {
+                FavouriteIcon(isFavourite = viewModel.isFavourite(movie),
+                    addToFavourite = { viewModel.addMovie(movie) },
+                    removeFromFavourite = { viewModel.removeMovie(movie) })
+            }
+        }
     }
 }

@@ -11,17 +11,20 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.movieapp.models.Movie
 import com.example.movieapp.models.getMovies
 import com.example.movieapp.navigation.MovieScreens
+import com.example.movieapp.viewmodel.FavouritesViewModel
 import com.example.movieapp.widgets.MovieRow
 
 @ExperimentalAnimationApi
 @Composable
 fun FavouriteScreen(
-    navController: NavController = rememberNavController()
+    navController: NavController = rememberNavController(),
+    viewModel: FavouritesViewModel
 ){
 
     Scaffold(
@@ -41,7 +44,7 @@ fun FavouriteScreen(
             }
         }
     ) {
-        MainContent(movies = listOf(getMovies()[2], getMovies()[6]) )
+        MainContent(movies = viewModel.getAllMovies())
     }
 }
 
